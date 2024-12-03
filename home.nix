@@ -46,6 +46,7 @@
     pavucontrol
     iwgtk
     vscodium
+    gedit
     blueman
     xdg-desktop-portal-hyprland
     xorg.xhost
