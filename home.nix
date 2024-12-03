@@ -45,11 +45,9 @@
     unzip
     pavucontrol
     iwgtk
-    kate
     vscodium
     blueman
     xdg-desktop-portal-hyprland
-    gparted
     xorg.xhost
     lxqt.lxqt-policykit
     nerd-fonts.fira-code
