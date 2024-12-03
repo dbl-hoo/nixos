@@ -3,6 +3,7 @@
 {
   imports = [
     ./sh.nix
+    ./git.nix
   ];
 
   # Home Manager needs a bit of information about you and the paths it should
@@ -108,16 +109,6 @@
   #
   home.sessionVariables = {
     # EDITOR = "emacs";
-  };
-
-  # git configuration
-  programs.git = {
-    enable = true;
-    userName = "Jason Kirkham";
-    userEmail = "jason.kirkham@gmail.com";
-    extraConfig = {
-      init.defaultBranch = "main";
-    };
   };
 
   # Let Home Manager install and manage itself.
