@@ -26,7 +26,7 @@ let
     e = "nano";
 
     enix = "sudo nano /etc/nixos/configuration.nix";
-    switch = "sudo nixos-rebuild switch --flake .";
+    switch = "sudo nixos-rebuild switch --flake $HOME/.dotfiles/.";
     flake = "home-manager switch --flake $HOME/.dotfiles/.";
     notes = "nano ~/notes.txt";
 
