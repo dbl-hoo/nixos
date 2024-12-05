@@ -1,27 +1,58 @@
 {
-  description = "Kirkham Flake";
+  description = "Kirkham System";  # Description of the flake
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Nixpkgs source (unstable version)
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    # Home Manager input from GitHub
+    home-manager.url = "github:nix-community/home-manager/master";
+    # Ensures Home Manager follows the same nixpkgs as the main system
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Stylix for stylish configuration
+    stylix.url = "github:danth/stylix";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ ./configuration.nix ];
+  outputs = { nixpkgs, home-manager, ... } @ inputs: 
+    let
+      # Define system architecture as x86_64-linux (Intel/AMD processors)
+      system = "x86_64-linux";  
+      # Hostname for the system
+      host = "Nixos";            
+      # Username to be used in the home manager configuration
+      username = "kirkham";      
+    in
+    {
+      # NixOS configuration for the given host
+      nixosConfigurations = {
+        # Defines a configuration for the "Nixos" host
+        "${host}" = nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit system;   # Pass system architecture
+            inherit inputs;   # Pass inputs from the flake
+            inherit username; # Pass username for home-manager configuration
+            inherit host;     # Pass host name
+          };
+          modules = [
+            # Configuration file specific to the Nixos host
+            ./hosts/${host}/config.nix
+            # Stylix module for stylish configurations
+            inputs.stylix.nixosModules.stylix
+            # Home Manager module to manage user environments
+            home-manager.nixosModules.home-manager
+            {
+              # Extra arguments for home-manager configuration
+              home-manager.extraSpecialArgs = {
+                inherit username;
+                inherit host;
+              };
+             
+              # Import the home.nix file from the relative path inside the flake
+              home-manager.users.${username} = import ./dotfiles/home.nix;
+            }
+          ];
+        };
       };
     };
-
-    homeConfigurations = {
-      kirkham = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        modules = [ ./home.nix ];
-      };
-    };
-  };
 }
