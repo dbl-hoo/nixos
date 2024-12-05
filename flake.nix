@@ -3,25 +3,22 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager = {
+		home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-  };
+		};
+	};
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
-    nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [ ./configuration.nix ];
-      };
-    };
+  outputs = { nixpkgs, ... } @ inputs: 
+	{
+		nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+			specialArgs = { inherit inputs; };
+			modules = [
+				./configuration.nix
+				inputs.home-manager.nixosModules.home-manager
+			];
+		};
 
-    homeConfigurations = {
-      kirkham = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        modules = [ ./home.nix ];
-      };
-    };
-  };
+	};
+
 }
