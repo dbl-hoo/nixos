@@ -28,12 +28,7 @@
       nixosConfigurations = {
         # Defines a configuration for the "Nixos" host
         "${host}" = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit system;   # Pass system architecture
-            inherit inputs;   # Pass inputs from the flake
-            inherit username; # Pass username for home-manager configuration
-            inherit host;     # Pass host name
-          };
+          system = system;  # Specify system architecture
           modules = [
             # Configuration file specific to the Nixos host
             ./hosts/${host}/config.nix
@@ -54,5 +49,8 @@
           ];
         };
       };
+
+      # This part makes sure that the flake provides the necessary attributes
+      legacyPackages.x86_64-linux = nixpkgs.legacyPackages.${system};
     };
 }
